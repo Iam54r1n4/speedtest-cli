@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 	"sync"
@@ -157,6 +158,15 @@ func SpeedTest(c *cli.Context) error {
 	transport := http.DefaultTransport.(*http.Transport).Clone()
 	transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: c.Bool(defs.OptionSkipCertVerify)}
 
+	// set proxy if it's given by parameter
+
+	if proxy := c.String(defs.OptionProxy); proxy != "" {
+		proxy_url, err := url.Parse(proxy)
+		if err != nil {
+			return errors.New("invalid proxy")
+		}
+		transport.Proxy = http.ProxyURL(proxy_url)
+	}
 	// bind to source IP address if given, or if ipv4/ipv6 is forced
 	if src := c.String(defs.OptionSource); src != "" || (forceIPv4 || forceIPv6) {
 		var localTCPAddr *net.TCPAddr

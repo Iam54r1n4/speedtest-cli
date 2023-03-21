@@ -209,6 +209,10 @@ func main() {
 				Usage: "Send a custom message along with the telemetry results.\n" +
 					"\tImplies --" + defs.OptionShare,
 			},
+			&cli.StringFlag{
+				Name:  defs.OptionProxy,
+				Usage: "Just set a http proxy to use in http requests",
+			},
 		},
 	}
 
